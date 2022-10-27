@@ -123,10 +123,16 @@ public class TagExtractorFrame extends JFrame{
                 {
                     words.add(scan.next().replace("\t", "").replace(" ", "").replace("-", "").replace("!", "").replace(".", "").replace(",", "").replace("\t\t", "").trim().toLowerCase());
                 }
-                for (int i = 0; i < words.size(); i++) {
-                    if (set.contains(words.get(i)) == true)
+                for (int i = 0; i < words.size(); i++)
+                {
+                    if(set.contains((String) words.get(i)) == true)
                     {
                         words.remove(i);
+                        i--;
+                    } else if (((String) words.get(i)).length() < 3)
+                    {
+                        words.remove(i);
+                        i--;
                     }
                 }
                 map = (Map<String, Integer>) words.parallelStream().collect(Collectors.groupingByConcurrent(w -> w, Collectors.counting()));
@@ -166,11 +172,10 @@ public class TagExtractorFrame extends JFrame{
                         new BufferedInputStream(Files.newInputStream(file, CREATE));
                 BufferedReader reader =
                         new BufferedReader(new InputStreamReader(in));
-                int line = 0;
-                while(reader.ready())
+                Scanner scanner = new Scanner(selectedFile);
+                while(scanner.hasNext())
                 {
-                    rec = reader.readLine();
-                    line++;
+                    rec = scanner.next();
                     set.add(rec.toLowerCase());
                 }
                 reader.close(); // must close the file to seal it and flush buffer
